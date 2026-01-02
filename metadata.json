@@ -1,0 +1,5 @@
+{
+  "name": "Gemini Neon Snake",
+  "description": "A high-fidelity, cyberpunk-themed Snake game featuring real-time AI commentary from the 'Snake Oracle' powered by Gemini.",
+  "requestFramePermissions": []
+}
