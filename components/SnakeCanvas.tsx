@@ -20,12 +20,12 @@ const SnakeCanvas: React.FC<SnakeCanvasProps> = ({ snake, food, status }) => {
 
     const cellSize = canvas.width / GRID_SIZE;
 
-    // Clear canvas - Solid Background
-    ctx.fillStyle = '#1e2030';
+    // Clear canvas - Solid Dark Foundation
+    ctx.fillStyle = '#0d0e15';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw grid lines
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+    // Draw Subtle Grid
+    ctx.strokeStyle = 'rgba(0, 243, 255, 0.04)';
     ctx.lineWidth = 1;
     for (let i = 0; i <= GRID_SIZE; i++) {
       ctx.beginPath();
@@ -38,56 +38,55 @@ const SnakeCanvas: React.FC<SnakeCanvasProps> = ({ snake, food, status }) => {
       ctx.stroke();
     }
 
-    // Draw Food - Solid Circle
-    ctx.shadowBlur = 0; // Removing blur for solid look
+    // Draw Food - Solid Crisp Magenta
     ctx.fillStyle = COLORS.food;
     ctx.beginPath();
     ctx.arc(
       food.x * cellSize + cellSize / 2,
       food.y * cellSize + cellSize / 2,
-      cellSize / 2.5,
+      cellSize / 3,
       0,
       Math.PI * 2
     );
     ctx.fill();
 
-    // Draw Snake - Solid Blocks
+    // Draw Snake - Crisp Solid Blocks
     snake.forEach((part, index) => {
       ctx.fillStyle = index === 0 ? COLORS.snakeHead : COLORS.snakeBody;
       const x = part.x * cellSize;
       const y = part.y * cellSize;
       
-      // Rectangles for solid snake parts
-      ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2);
+      // Rectangles for solid snake parts - slightly rounded for tech feel
+      const padding = 1.5;
+      const size = cellSize - padding * 2;
+      
+      // Use fillRect for the "solid" look requested
+      ctx.fillRect(x + padding, y + padding, size, size);
 
-      // Eye for the head to show direction clearly
+      // Eye for the head
       if (index === 0) {
         ctx.fillStyle = '#000';
-        ctx.beginPath();
-        ctx.arc(x + cellSize/2, y + cellSize/2, 2, 0, Math.PI * 2);
-        ctx.fill();
+        const eyeSize = 2;
+        ctx.fillRect(x + cellSize/2 - eyeSize/2, y + cellSize/2 - eyeSize/2, eyeSize, eyeSize);
       }
     });
 
-    // Game Over Overlay
-    if (status === GameStatus.GAME_OVER) {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.font = 'bold 24px Orbitron';
-      ctx.fillStyle = '#ff0055';
-      ctx.textAlign = 'center';
-      ctx.fillText('CONNECTION LOST', canvas.width / 2, canvas.height / 2);
-    }
   }, [snake, food, status]);
 
   return (
-    <div className="relative p-2 bg-[#252839] rounded-lg shadow-xl border-4 border-[#2d3045]">
+    <div className="relative p-3 bg-[#161824] rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10 scanlines group">
+      <div className="scanline-bar"></div>
       <canvas
         ref={canvasRef}
         width={400}
         height={400}
-        className="block max-w-full h-auto rounded-sm"
+        className="block max-w-full h-auto rounded-md relative z-10"
       />
+      {/* Decorative corners */}
+      <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#00f3ff]/40 rounded-tl-xl pointer-events-none"></div>
+      <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#00f3ff]/40 rounded-tr-xl pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#00f3ff]/40 rounded-bl-xl pointer-events-none"></div>
+      <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#00f3ff]/40 rounded-br-xl pointer-events-none"></div>
     </div>
   );
 };

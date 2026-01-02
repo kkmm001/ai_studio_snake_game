@@ -138,11 +138,8 @@ const App: React.FC = () => {
   };
 
   const togglePause = () => {
-    if (status === GameStatus.PLAYING) {
-      setStatus(GameStatus.PAUSED);
-    } else if (status === GameStatus.PAUSED) {
-      setStatus(GameStatus.PLAYING);
-    }
+    if (status === GameStatus.PLAYING) setStatus(GameStatus.PAUSED);
+    else if (status === GameStatus.PAUSED) setStatus(GameStatus.PLAYING);
   };
 
   useEffect(() => {
@@ -158,6 +155,9 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+        e.preventDefault();
+      }
       switch (e.key) {
         case 'ArrowUp': case 'w': case 'W':
           if (directionRef.current !== Direction.DOWN) {
@@ -191,175 +191,209 @@ const App: React.FC = () => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [status]);
+  }, [status, difficulty]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 selection:bg-[#00f3ff] selection:text-black">
-      <header className="mb-6 text-center">
-        <h1 className="text-4xl md:text-6xl font-orbitron font-bold tracking-tighter mb-2 text-transparent bg-clip-text bg-gradient-to-r from-[#00f3ff] via-[#39ff14] to-[#ff007f]">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 selection:bg-[#00f3ff] selection:text-black font-rajdhani">
+      <header className="mb-8 text-center">
+        <h1 className="text-5xl md:text-7xl font-orbitron font-bold tracking-tighter mb-2 text-transparent bg-clip-text bg-gradient-to-r from-[#00f3ff] via-[#39ff14] to-[#ff007f] drop-shadow-[0_0_10px_rgba(0,243,255,0.3)]">
           NEON SNAKE
         </h1>
-        <div className="flex items-center justify-center gap-4 text-[10px] font-bold tracking-[0.2em] text-[#00f3ff] opacity-60 uppercase">
-          <span>AI Oracle Integrated</span>
-          <div className="w-1 h-1 bg-[#00f3ff] rounded-full"></div>
-          <span>Solid Vector v3.2</span>
+        <div className="flex items-center justify-center gap-4 text-[10px] font-bold tracking-[0.4em] text-[#00f3ff] opacity-80 uppercase">
+          <span>Neural Engine Active</span>
+          <div className="w-1.5 h-1.5 bg-[#39ff14] rounded-full animate-pulse"></div>
+          <span>Refined Vector v4.0</span>
         </div>
       </header>
 
-      <main className="flex flex-col lg:flex-row gap-6 items-start justify-center max-w-7xl w-full">
+      <main className="flex flex-col lg:flex-row gap-8 items-start justify-center max-w-7xl w-full">
+        
         {/* Left Side - Stats & History */}
-        <section className="flex flex-col gap-4 w-full lg:w-64 order-2 lg:order-1">
-          <div className="p-4 glass-panel rounded-xl">
-            <p className="text-slate-400 text-[10px] uppercase font-bold mb-1 tracking-widest">Global Best</p>
-            <p className="text-2xl font-orbitron text-[#00f3ff]">{highScore}</p>
+        <section className="flex flex-col gap-6 w-full lg:w-72 order-2 lg:order-1">
+          <div className="p-5 glass-panel rounded-2xl border-l-4 border-l-[#00f3ff]">
+            <p className="text-[#00f3ff] text-[10px] uppercase font-bold mb-1 tracking-[0.2em]">Record Matrix</p>
+            <p className="text-3xl font-orbitron text-white">{highScore}</p>
           </div>
 
-          <div className="p-4 glass-panel rounded-xl overflow-hidden">
-             <h3 className="text-xs uppercase font-bold text-[#ff007f] mb-3 tracking-widest">Session Log</h3>
-             <div className="space-y-3 max-h-48 overflow-y-auto pr-2 text-left">
+          <div className="p-5 glass-panel rounded-2xl overflow-hidden border-t-2 border-t-[#ff007f]/30">
+             <h3 className="text-xs uppercase font-bold text-[#ff007f] mb-4 tracking-[0.2em] flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-[#ff007f] rounded-full"></span>
+                Session Log
+             </h3>
+             <div className="space-y-4 max-h-[320px] overflow-y-auto pr-3 scrollbar-custom">
                {scoreHistory.length > 0 ? scoreHistory.map(record => (
-                 <div key={record.id} className="flex flex-col border-b border-white/5 pb-2">
+                 <div key={record.id} className="flex flex-col group border-b border-white/5 pb-3">
                    <div className="flex justify-between items-center mb-1">
-                     <span className="text-lg font-orbitron text-white">{record.score}</span>
-                     <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold ${record.difficulty === Difficulty.HARD ? 'bg-red-500/20 text-red-400' : 'bg-blue-500/20 text-blue-400'}`}>
+                     <span className="text-xl font-orbitron text-white group-hover:text-[#39ff14] transition-colors">{record.score}</span>
+                     <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold tracking-tighter ${record.difficulty === Difficulty.HARD ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'}`}>
                         {record.difficulty}
                      </span>
                    </div>
-                   <span className="text-[9px] text-slate-500 uppercase">
-                     {new Date(record.timestamp).toLocaleString()}
+                   <span className="text-[10px] text-slate-500 font-mono tracking-tight uppercase">
+                     {new Date(record.timestamp).toLocaleTimeString()} // ID:{record.id.slice(-4)}
                    </span>
                  </div>
                )) : (
-                 <p className="text-slate-600 text-[10px] italic">No data yet...</p>
+                 <p className="text-slate-600 text-[11px] font-mono italic uppercase tracking-widest text-center py-4">Waiting for mission data...</p>
                )}
              </div>
           </div>
         </section>
 
         {/* Center - Game Canvas */}
-        <section className="flex flex-col items-center gap-6 order-1 lg:order-2">
-          <div className="relative group">
+        <section className="flex flex-col items-center gap-6 order-1 lg:order-2 flex-grow max-w-[440px]">
+          <div className="relative w-full">
             <SnakeCanvas snake={snake} food={food} status={status} />
             
+            {/* Overlay: Initial Difficulty Select */}
             {status === GameStatus.IDLE && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/95 backdrop-blur-md z-10 transition-all duration-500 rounded-lg p-6">
-                <h2 className="text-xl font-orbitron text-[#00f3ff] mb-8 tracking-[0.2em]">DIFFICULTY</h2>
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/95 backdrop-blur-xl z-20 rounded-xl p-8 border border-white/10">
+                <div className="mb-10 text-center">
+                  <h2 className="text-2xl font-orbitron text-[#00f3ff] mb-2 tracking-[0.2em]">BOOT PROTOCOL</h2>
+                  <p className="text-[10px] text-slate-500 uppercase tracking-widest">Select operational difficulty</p>
+                </div>
                 
                 <div className="flex gap-4 mb-10 w-full">
                   <button 
                     onClick={() => setDifficulty(Difficulty.EASY)}
-                    className={`flex-1 py-3 font-orbitron text-xs tracking-widest transition-all duration-300 border-2 ${difficulty === Difficulty.EASY ? 'border-blue-400 bg-blue-400/20 text-blue-400' : 'border-slate-700 text-slate-500'}`}
+                    className={`flex-1 py-4 font-orbitron text-xs tracking-widest transition-all duration-300 border-2 rounded-lg ${difficulty === Difficulty.EASY ? 'border-blue-400 bg-blue-400/20 text-blue-400 shadow-[0_0_20px_rgba(96,165,250,0.3)]' : 'border-slate-800 text-slate-600 hover:border-slate-700'}`}
                   >
-                    EASY
+                    EASY.DRV
                   </button>
                   <button 
                     onClick={() => setDifficulty(Difficulty.HARD)}
-                    className={`flex-1 py-3 font-orbitron text-xs tracking-widest transition-all duration-300 border-2 ${difficulty === Difficulty.HARD ? 'border-red-400 bg-red-400/20 text-red-400' : 'border-slate-700 text-slate-500'}`}
+                    className={`flex-1 py-4 font-orbitron text-xs tracking-widest transition-all duration-300 border-2 rounded-lg ${difficulty === Difficulty.HARD ? 'border-red-400 bg-red-400/20 text-red-400 shadow-[0_0_20px_rgba(248,113,113,0.3)]' : 'border-slate-800 text-slate-600 hover:border-slate-700'}`}
                   >
-                    HARD
+                    HARD.DRV
                   </button>
                 </div>
 
                 <button 
                   onClick={startGame}
-                  className="w-full py-4 bg-[#39ff14] text-black font-orbitron font-bold text-lg hover:bg-white transition-all shadow-lg"
+                  className="w-full py-5 bg-[#39ff14] text-black font-orbitron font-bold text-xl hover:bg-white transition-all transform active:scale-95 rounded-lg shadow-[0_0_30px_rgba(57,255,20,0.3)]"
                 >
-                  START ENGINE
+                  INITIALIZE
                 </button>
               </div>
             )}
 
+            {/* Overlay: Paused */}
             {status === GameStatus.PAUSED && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/80 backdrop-blur-sm z-10 rounded-lg">
-                <h2 className="text-2xl font-orbitron text-[#00f3ff] mb-4">SUSPENDED</h2>
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/70 backdrop-blur-md z-20 rounded-xl">
+                <h2 className="text-3xl font-orbitron text-[#00f3ff] mb-8 animate-pulse">SUSPENDED</h2>
                 <button 
                   onClick={togglePause}
-                  className="px-10 py-3 bg-[#00f3ff] text-black font-bold uppercase hover:bg-white transition-all shadow-[0_0_15px_#00f3ff]"
+                  className="px-12 py-4 bg-transparent border-2 border-[#00f3ff] text-[#00f3ff] font-bold uppercase hover:bg-[#00f3ff] hover:text-black transition-all rounded-lg"
                 >
                   RESUME
                 </button>
               </div>
             )}
 
+            {/* Overlay: Game Over with Difficulty Switch */}
             {status === GameStatus.GAME_OVER && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/95 z-10 rounded-lg p-6">
-                <h2 className="text-2xl font-orbitron text-[#ff0055] mb-6 font-bold tracking-tighter uppercase">Connection Lost</h2>
-                <div className="mb-8 text-center">
-                  <p className="text-slate-400 text-[10px] uppercase mb-1">Captured Bits</p>
-                  <p className="text-5xl font-orbitron text-white">{score}</p>
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/95 backdrop-blur-xl z-20 rounded-xl p-8">
+                <h2 className="text-3xl font-orbitron text-[#ff0055] mb-2 font-bold tracking-tighter uppercase">LINK SEVERED</h2>
+                <div className="mb-6 text-center">
+                  <p className="text-slate-500 text-[10px] uppercase mb-1 font-mono">Final Score Record</p>
+                  <p className="text-6xl font-orbitron text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">{score}</p>
                 </div>
+
+                {/* Difficulty switch on Game Over screen */}
+                <div className="w-full mb-8">
+                  <p className="text-[10px] text-center text-slate-500 uppercase tracking-[0.2em] mb-3">Adjust Parameter For Next Run</p>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => setDifficulty(Difficulty.EASY)}
+                      className={`flex-1 py-3 font-orbitron text-[10px] tracking-widest transition-all border-2 rounded-md ${difficulty === Difficulty.EASY ? 'border-blue-400 text-blue-400 bg-blue-400/10' : 'border-slate-800 text-slate-600'}`}
+                    >
+                      EASY
+                    </button>
+                    <button 
+                      onClick={() => setDifficulty(Difficulty.HARD)}
+                      className={`flex-1 py-3 font-orbitron text-[10px] tracking-widest transition-all border-2 rounded-md ${difficulty === Difficulty.HARD ? 'border-red-400 text-red-400 bg-red-400/10' : 'border-slate-800 text-slate-600'}`}
+                    >
+                      HARD
+                    </button>
+                  </div>
+                </div>
+
                 <button 
                   onClick={startGame}
-                  className="w-full py-4 bg-[#ff0055] text-white font-orbitron font-bold hover:bg-white hover:text-[#ff0055] transition-all"
+                  className="w-full py-4 bg-[#ff0055] text-white font-orbitron font-bold text-lg hover:bg-white hover:text-[#ff0055] transition-all rounded-lg shadow-[0_0_20px_rgba(255,0,85,0.4)]"
                 >
-                  REBOOT
+                  REBOOT.EXE
                 </button>
               </div>
             )}
           </div>
 
-          <div className="flex flex-col w-full gap-4">
+          <div className="w-full space-y-4">
             {/* Control Strip */}
-            <div className="flex gap-4 w-full">
-               {(status === GameStatus.PLAYING || status === GameStatus.PAUSED) && (
+            {(status === GameStatus.PLAYING || status === GameStatus.PAUSED) && (
+              <div className="flex gap-4">
                  <button 
                    onClick={togglePause}
-                   className={`flex-1 py-3 font-orbitron text-sm tracking-widest transition-all duration-300 border-2 rounded-lg ${status === GameStatus.PAUSED ? 'border-[#39ff14] text-[#39ff14] hover:bg-[#39ff14] hover:text-black' : 'border-[#00f3ff] text-[#00f3ff] hover:bg-[#00f3ff] hover:text-black'}`}
+                   className={`flex-1 py-3 font-orbitron text-xs tracking-widest transition-all duration-300 border-2 rounded-xl flex items-center justify-center gap-2 ${status === GameStatus.PAUSED ? 'border-[#39ff14] text-[#39ff14] hover:bg-[#39ff14]/10' : 'border-[#00f3ff] text-[#00f3ff] hover:bg-[#00f3ff]/10'}`}
                  >
-                   {status === GameStatus.PAUSED ? 'RESUME SYSTEM' : 'PAUSE SYSTEM'}
+                   <span className={`w-2 h-2 rounded-full ${status === GameStatus.PAUSED ? 'bg-[#39ff14]' : 'bg-[#00f3ff]'}`}></span>
+                   {status === GameStatus.PAUSED ? 'RESUME STREAM' : 'PAUSE STREAM'}
                  </button>
-               )}
-            </div>
+              </div>
+            )}
 
             <div className="flex gap-4">
-              <div className="flex-1 flex flex-col items-center px-4 py-2 glass-panel rounded-lg">
-                <span className="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-1">Live Bits</span>
-                <span className="text-2xl font-orbitron text-[#39ff14]">{score}</span>
+              <div className="flex-1 p-4 glass-panel rounded-2xl flex flex-col items-center">
+                <span className="text-[10px] text-slate-500 uppercase font-bold tracking-[0.2em] mb-1">DATA FLOW</span>
+                <span className="text-3xl font-orbitron text-[#39ff14]">{score}</span>
               </div>
-              <div className="flex-1 flex flex-col items-center px-4 py-2 glass-panel rounded-lg">
-                <span className="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-1">Rate</span>
-                <span className="text-2xl font-orbitron text-white">{(1000/speed).toFixed(1)}Hz</span>
+              <div className="flex-1 p-4 glass-panel rounded-2xl flex flex-col items-center">
+                <span className="text-[10px] text-slate-500 uppercase font-bold tracking-[0.2em] mb-1">SYNC RATE</span>
+                <span className="text-3xl font-orbitron text-white">{(1000/speed).toFixed(1)}Hz</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Right Side - Oracle & Controls Info */}
+        {/* Right Side - Oracle & Terminal Info */}
         <section className="flex flex-col gap-6 w-full lg:w-80 order-3">
-          <OracleMessage comment={oracleComment} loading={oracleLoading} />
+          <div className="w-full">
+            <OracleMessage comment={oracleComment} loading={oracleLoading} />
+          </div>
           
-          <div className="p-4 glass-panel rounded-xl">
-             <h3 className="text-[10px] uppercase font-bold text-slate-400 mb-3 tracking-widest border-b border-white/5 pb-2">User Protocol</h3>
-             <ul className="space-y-2 text-[13px] text-slate-300">
-               <li className="flex justify-between">
-                 <span className="text-slate-500">Navigation</span>
-                 <span className="text-white font-medium italic">Arrows / WASD</span>
+          <div className="p-6 glass-panel rounded-2xl border-r-4 border-r-[#ff007f]">
+             <h3 className="text-[11px] uppercase font-bold text-slate-400 mb-5 tracking-[0.3em] border-b border-white/5 pb-3">Operational Directives</h3>
+             <ul className="space-y-4 font-mono text-xs text-slate-400">
+               <li className="flex flex-col gap-1">
+                 <span className="text-slate-600 uppercase text-[9px] tracking-widest">Vector Steering</span>
+                 <span className="text-white bg-white/5 px-2 py-1 rounded w-fit italic">Arrows / WASD Keys</span>
                </li>
-               <li className="flex justify-between">
-                 <span className="text-slate-500">Action Pause</span>
-                 <span className="text-white font-medium italic">Space Bar</span>
+               <li className="flex flex-col gap-1">
+                 <span className="text-slate-600 uppercase text-[9px] tracking-widest">Process Control</span>
+                 <span className="text-white bg-white/5 px-2 py-1 rounded w-fit italic">Space Bar</span>
                </li>
-               <li className="flex justify-between pt-2">
-                 <span className="text-slate-500 text-[10px]">Snake Color</span>
-                 <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-[#39ff14]"></div>
-                    <span className="text-[10px] uppercase">Solid Bio-link</span>
+               <li className="flex flex-col gap-2 pt-2">
+                 <div className="flex items-center justify-between">
+                    <span className="text-slate-600 uppercase text-[9px] tracking-widest">Bio-link</span>
+                    <div className="w-3 h-3 bg-[#39ff14] shadow-[0_0_8px_#39ff14]"></div>
                  </div>
-               </li>
-               <li className="flex justify-between">
-                 <span className="text-slate-500 text-[10px]">Point Color</span>
-                 <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-[#ff007f]"></div>
-                    <span className="text-[10px] uppercase">Solid Data-bit</span>
+                 <div className="flex items-center justify-between">
+                    <span className="text-slate-600 uppercase text-[9px] tracking-widest">Data-bit</span>
+                    <div className="w-3 h-3 bg-[#ff007f] shadow-[0_0_8px_#ff007f]"></div>
                  </div>
                </li>
              </ul>
           </div>
+          
+          <div className="px-6 py-4 glass-panel rounded-2xl flex items-center gap-3">
+             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
+             <span className="text-[10px] text-slate-400 font-mono tracking-widest uppercase italic">Secure AI Connection</span>
+          </div>
         </section>
       </main>
 
-      <footer className="mt-auto py-6 text-slate-600 text-[9px] uppercase tracking-[0.4em]">
-        SOLID STATE LOGIC &bull; BINARY CONSUMPTION ENGINE
+      <footer className="mt-auto py-8 text-slate-600 text-[10px] font-mono uppercase tracking-[0.5em] opacity-40">
+        NEON GENESIS // SYSTEM CORE v4.0.2 // (C) 2025 DIGITAL_VOID
       </footer>
     </div>
   );
