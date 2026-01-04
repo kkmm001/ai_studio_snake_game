@@ -20,12 +20,12 @@ const SnakeCanvas: React.FC<SnakeCanvasProps> = ({ snake, food, status }) => {
 
     const cellSize = canvas.width / GRID_SIZE;
 
-    // Clear canvas - Solid Dark Foundation
-    ctx.fillStyle = '#0d0e15';
+    // Clear canvas - Solid Light Foundation
+    ctx.fillStyle = '#f8fafc';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Draw Subtle Grid
-    ctx.strokeStyle = 'rgba(0, 243, 255, 0.04)';
+    ctx.strokeStyle = COLORS.grid;
     ctx.lineWidth = 1;
     for (let i = 0; i <= GRID_SIZE; i++) {
       ctx.beginPath();
@@ -56,17 +56,15 @@ const SnakeCanvas: React.FC<SnakeCanvasProps> = ({ snake, food, status }) => {
       const x = part.x * cellSize;
       const y = part.y * cellSize;
       
-      // Rectangles for solid snake parts - slightly rounded for tech feel
       const padding = 1.5;
       const size = cellSize - padding * 2;
       
-      // Use fillRect for the "solid" look requested
       ctx.fillRect(x + padding, y + padding, size, size);
 
       // Eye for the head
       if (index === 0) {
-        ctx.fillStyle = '#000';
-        const eyeSize = 2;
+        ctx.fillStyle = '#ffffff';
+        const eyeSize = 3;
         ctx.fillRect(x + cellSize/2 - eyeSize/2, y + cellSize/2 - eyeSize/2, eyeSize, eyeSize);
       }
     });
@@ -74,19 +72,25 @@ const SnakeCanvas: React.FC<SnakeCanvasProps> = ({ snake, food, status }) => {
   }, [snake, food, status]);
 
   return (
-    <div className="relative p-3 bg-[#161824] rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10 scanlines group">
+    <div className="relative p-1 bg-slate-200 rounded-lg industrial-border scanlines group transition-all duration-300">
       <div className="scanline-bar"></div>
       <canvas
         ref={canvasRef}
         width={400}
         height={400}
-        className="block max-w-full h-auto rounded-md relative z-10"
+        className="block max-w-full h-auto rounded-sm relative z-10"
       />
+      
+      {/* Heavy Duty Status Indicators */}
+      <div className="absolute top-[-25px] left-4 bg-[#0f172a] text-white text-[9px] font-bold px-3 py-1 uppercase tracking-[0.2em] rounded-t-md border-x-2 border-t-2 border-[#0f172a]">
+        Video_Feed::Live
+      </div>
+      
       {/* Decorative corners */}
-      <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#00f3ff]/40 rounded-tl-xl pointer-events-none"></div>
-      <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#00f3ff]/40 rounded-tr-xl pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#00f3ff]/40 rounded-bl-xl pointer-events-none"></div>
-      <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#00f3ff]/40 rounded-br-xl pointer-events-none"></div>
+      <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-[#0891b2] pointer-events-none z-20"></div>
+      <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-[#0891b2] pointer-events-none z-20"></div>
+      <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-[#0891b2] pointer-events-none z-20"></div>
+      <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-[#0891b2] pointer-events-none z-20"></div>
     </div>
   );
 };

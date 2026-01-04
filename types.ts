@@ -19,6 +19,7 @@ export enum GameStatus {
 }
 
 export enum Difficulty {
+  SLOW = 'SLOW',
   EASY = 'EASY',
   HARD = 'HARD'
 }

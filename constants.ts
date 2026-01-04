@@ -2,6 +2,11 @@
 export const GRID_SIZE = 20;
 
 export const SPEEDS = {
+  SLOW: {
+    START: 400,
+    MIN: 250,
+    INCREMENT: 0.5
+  },
   EASY: {
     START: 200,
     MIN: 100,
@@ -17,9 +22,9 @@ export const SPEEDS = {
 export const SCORE_INCREMENT = 10;
 
 export const COLORS = {
-  snakeHead: '#39ff14', // High-vis solid green
-  snakeBody: '#008f11', // Darker solid green
-  food: '#ff007f',      // Solid vibrant pink
-  grid: 'rgba(255, 255, 255, 0.03)',
-  neon: '#00f3ff',
+  snakeHead: '#22c55e', // Bold green
+  snakeBody: '#16a34a', // Darker green
+  food: '#db2777',      // Bold pink/magenta
+  grid: 'rgba(15, 23, 42, 0.05)',
+  neon: '#0891b2',      // Deep cyan for light mode
 };
